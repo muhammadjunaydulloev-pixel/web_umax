@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rӯйи Ман AI — Ёрдамчии нигоҳубини намуди зоҳирӣ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+  --accent1:#8B5CF6; --accent2:#22D3EE; --amber:#F5A623; --danger:#F26D6D; --good:#3DDC97;
+  --grad: linear-gradient(135deg, var(--accent1), var(--accent2));
+  --font-display:'Space Grotesk', system-ui, sans-serif;
+  --font-body:'Inter', system-ui, sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#080a12; --bg2:#0d1120; --surface:rgba(255,255,255,0.045); --surface2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.09); --text:#F2F4F9; --text2:#9AA4BD; --text3:#606a85;
+  --shadow: 0 20px 60px -25px rgba(0,0,0,0.6);
+}
+:root[data-theme="light"]{
+  --bg:#F3F4FA; --bg2:#EAECF6; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.9);
+  --border:rgba(20,25,50,0.08); --text:#171A2B; --text2:#5A6180; --text3:#8A90A8;
+  --shadow: 0 20px 50px -25px rgba(30,30,70,0.18);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; height:100%;}
+body{
+  font-family:var(--font-body);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(139,92,246,0.16), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(34,211,238,0.12), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  transition:background .3s ease, color .3s ease;
+  min-height:100vh;
+}
+h1,h2,h3,h4{font-family:var(--font-display); margin:0; letter-spacing:-0.01em;}
+p{margin:0;}
+button{font-family:var(--font-body); cursor:pointer;}
+a{color:inherit; text-decoration:none;}
+::selection{background:var(--accent1); color:#fff;}
+
+/* ============ REGISTRATION ============ */
+.reg-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;
+}
+.reg-card{
+  width:100%; max-width:420px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:32px 26px; backdrop-filter:blur(16px); box-shadow:var(--shadow);
+}
+
+/* ============ LAYOUT ============ */
+#app{max-width:1180px; margin:0 auto; padding:0 20px 110px; position:relative;}
+.topbar{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between;
+  padding:16px 4px; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(to bottom, var(--bg) 65%, transparent);
+}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:19px;}
+.brand-mark{width:34px; height:34px; border-radius:11px; background:var(--grad); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px -6px rgba(139,92,246,.6); flex-shrink:0;}
+.brand-mark svg{width:18px; height:18px;}
+.topbar-actions{display:flex; align-items:center; gap:8px;}
+.demo-chip{
+  font-size:11px; font-weight:600; color:var(--amber); background:rgba(245,166,35,0.12);
+  border:1px solid rgba(245,166,35,0.3); padding:5px 10px; border-radius:100px; letter-spacing:.02em;
+}
+@media(max-width:380px){ .demo-chip{display:none;} }
+.icon-btn{
+  width:38px; height:38px; border-radius:12px; border:1px solid var(--border); background:var(--surface);
+  display:flex; align-items:center; justify-content:center; color:var(--text); transition:.2s;
+}
+.icon-btn:hover{background:var(--surface2); transform:translateY(-1px);}
+.icon-btn svg{width:18px; height:18px;}
+
+/* desktop side nav */
+.desktop-nav{display:none;}
+@media(min-width:860px){
+  .desktop-nav{
+    display:flex; gap:4px; background:var(--surface); border:1px solid var(--border); padding:5px;
+    border-radius:100px; backdrop-filter:blur(10px);
+  }
+  .desktop-nav a{
+    padding:8px 16px; border-radius:100px; font-size:14px; font-weight:600; color:var(--text2); transition:.2s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .desktop-nav a.active{background:var(--grad); color:#fff;}
+  .bottom-nav{display:none !important;}
+  #app{padding-bottom:60px;}
+}
+
+.page{animation:fadeUp .45s cubic-bezier(.2,.8,.2,1);}
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ CARDS / GLASS ============ */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:22px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:var(--shadow);
+}
+.card.tight{padding:16px;}
+.grid{display:grid; gap:16px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+@media(min-width:640px){.sm\:grid-3{grid-template-columns:repeat(3,1fr);} .sm\:grid-2{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:639px){
+  .grid-3{grid-template-columns:repeat(2,1fr);}
+  #app{padding-left:14px; padding-right:14px;}
+  .hero{padding:26px 18px; border-radius:22px;}
+  .card{padding:18px; border-radius:18px;}
+  .reg-card{padding:26px 20px;}
+  .btn{font-size:14px; padding:13px 18px;}
+}
+
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--accent2);}
+.muted{color:var(--text2); font-size:14px; line-height:1.6;}
+.small{font-size:12.5px; color:var(--text3);}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:600; font-size:15px;
+  padding:14px 22px; border-radius:100px; border:none; transition:.2s; white-space:nowrap;
+}
+.btn-primary{background:var(--grad); color:#fff; box-shadow:0 14px 30px -12px rgba(139,92,246,.55);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 18px 34px -10px rgba(139,92,246,.65);}
+.btn-primary:active{transform:translateY(0);}
+.btn-ghost{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--surface);}
+.btn-sm{padding:9px 16px; font-size:13.5px; border-radius:100px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:.5; cursor:not-allowed; transform:none !important;}
+
+.chip{font-size:12px; font-weight:600; padding:5px 11px; border-radius:100px; display:inline-flex; align-items:center; gap:5px;}
+.chip-good{background:rgba(61,220,151,.13); color:var(--good);}
+.chip-amber{background:rgba(245,166,35,.13); color:var(--amber);}
+
+/* ============ PROGRESS RING ============ */
+.ring-wrap{position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.ring-wrap canvas{display:block;}
+.ring-center{position:absolute; text-align:center;}
+.ring-num{font-family:var(--font-display); font-weight:700; line-height:1;}
+.ring-label{font-size:11px; color:var(--text2); margin-top:2px;}
+
+/* ============ HOME ============ */
+.hero{
+  border-radius:28px; padding:34px 26px; position:relative; overflow:hidden; margin-bottom:18px;
+  background:linear-gradient(155deg, rgba(139,92,246,.22), rgba(34,211,238,.10)), var(--surface);
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.hero::after{
+  content:''; position:absolute; width:280px; height:280px; border-radius:50%; right:-90px; top:-110px;
+  background:radial-gradient(circle, rgba(34,211,238,.35), transparent 70%); filter:blur(10px);
+}
+.hero h1{font-size:clamp(28px,5vw,40px); margin-bottom:8px;}
+.hero .tagline{color:var(--text2); font-size:15px; margin-bottom:22px; max-width:420px;}
+.upload-drop{
+  border:1.5px dashed var(--border); border-radius:var(--radius-md); padding:26px; text-align:center;
+  background:var(--surface2); transition:.2s; cursor:pointer;
+}
+.upload-drop:hover{border-color:var(--accent2);}
+.upload-drop svg{width:30px; height:30px; margin-bottom:8px; color:var(--accent2);}
+
+.stat-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:16px;}
+.stat-pill{
+  display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border);
+  padding:9px 14px; border-radius:100px; font-size:13.5px; font-weight:600;
+}
+
+.quick-links{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:18px;}
+@media(min-width:640px){.quick-links{grid-template-columns:repeat(4,1fr);}}
+.quick-link{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 14px;
+  display:flex; flex-direction:column; gap:8px; transition:.2s;
+}
+.quick-link:hover{transform:translateY(-3px); background:var(--surface2);}
+.quick-link .qi{width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--grad);}
+.quick-link .qi svg{width:17px; height:17px; color:#fff;}
+.quick-link .qt{font-weight:600; font-size:14px;}
+.quick-link .qs{font-size:12px; color:var(--text2);}
+
+/* ============ ANALYSIS ============ */
+.analysis-preview{
+  width:100%; aspect-ratio:4/3; max-height:340px; border-radius:var(--radius-md); object-fit:cover;
+  border:1px solid var(--border); background:var(--surface2);
+}
+.scan-overlay{
+  position:relative; overflow:hidden; border-radius:var(--radius-md);
+}
+.scan-line{
+  position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--accent2), transparent);
+  box-shadow:0 0 16px 4px rgba(34,211,238,.7); animation:scan 1.7s ease-in-out infinite;
+}
+@keyframes scan{0%{top:4%;} 50%{top:92%;} 100%{top:4%;}}
+.loading-text{display:flex; align-items:center; gap:10px; color:var(--text2); font-size:14px; margin-top:14px;}
+.dot-pulse{width:8px; height:8px; border-radius:50%; background:var(--accent2); animation:pulse 1s infinite ease-in-out;}
+@keyframes pulse{0%,100%{opacity:.3; transform:scale(.8);} 50%{opacity:1; transform:scale(1.15);}}
+
+.metric-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);}
+.metric-row:last-child{border-bottom:none;}
+.metric-name{font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;}
+.bar-track{flex:1; height:7px; background:var(--surface2); border-radius:100px; margin:0 14px; overflow:hidden;}
+.bar-fill{height:100%; border-radius:100px; background:var(--grad); width:0%; transition:width 1s cubic-bezier(.2,.8,.2,1);}
+.metric-val{font-weight:700; font-size:13.5px; width:38px; text-align:right; font-family:var(--font-display);}
+
+.note-box{
+  background:rgba(245,166,35,.07); border:1px solid rgba(245,166,35,.25); border-radius:var(--radius-sm);
+  padding:12px 14px; font-size:13px; color:var(--text2); display:flex; gap:10px; align-items:flex-start; margin-top:14px;
+}
+.note-box svg{width:16px; height:16px; color:var(--amber); flex-shrink:0; margin-top:1px;}
+
+/* ============ ROUTINE ============ */
+.task{
+  display:flex; align-items:center; gap:14px; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);
+  background:var(--surface); margin-bottom:10px; transition:.2s;
+}
+.task.done{border-color:rgba(61,220,151,.4); background:rgba(61,220,151,.06);}
+.task-check{
+  width:26px; height:26px; border-radius:8px; border:2px solid var(--border); flex-shrink:0; display:flex;
+  align-items:center; justify-content:center; transition:.2s;
+}
+.task.done .task-check{background:var(--good); border-color:var(--good);}
+.task-check svg{width:14px; height:14px; color:#fff; opacity:0; transition:.15s;}
+.task.done .task-check svg{opacity:1;}
+.task-body{flex:1;}
+.task-title{font-weight:600; font-size:14.5px;}
+.task-time{font-size:12px; color:var(--text3);}
+.task-title.strike{text-decoration:line-through; color:var(--text3);}
+
+.toggle{
+  width:44px; height:26px; border-radius:100px; background:var(--surface2); border:1px solid var(--border);
+  position:relative; transition:.2s; flex-shrink:0;
+}
+.toggle::after{
+  content:''; position:absolute; width:20px; height:20px; border-radius:50%; background:var(--text3); top:2px; left:2px;
+  transition:.2s;
+}
+.toggle.on{background:var(--grad); border-color:transparent;}
+.toggle.on::after{transform:translateX(18px); background:#fff;}
+
+/* ============ PROGRESS PAGE ============ */
+.seg-control{display:inline-flex; background:var(--surface2); border:1px solid var(--border); border-radius:100px; padding:4px; gap:2px;}
+.seg-control button{border:none; background:transparent; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; color:var(--text2);}
+.seg-control button.active{background:var(--grad); color:#fff;}
+.chart-wrap{width:100%; overflow-x:auto;}
+canvas#lineChart{width:100%; height:220px;}
+
+.history-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:6px;}
+.history-card{
+  flex:0 0 auto; width:108px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surface);
+  padding:10px; text-align:center;
+}
+.history-thumb{width:100%; height:70px; border-radius:9px; margin-bottom:8px; background:var(--grad); opacity:.85;}
+.history-date{font-size:11px; color:var(--text3);}
+.history-score{font-family:var(--font-display); font-weight:700; font-size:15px;}
+
+/* ============ HAIRSTYLE ============ */
+.hs-card{
+  border-radius:var(--radius-md); border:1px solid var(--border); background:var(--surface); overflow:hidden; transition:.2s;
+}
+.hs-card:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+.hs-thumb{height:130px; position:relative; display:flex; align-items:center; justify-content:center;}
+.hs-thumb svg{width:52px; height:52px; color:#fff; opacity:.92;}
+.hs-body{padding:14px;}
+.hs-name{font-weight:700; font-size:15px; margin-bottom:4px;}
+.hs-desc{font-size:12.5px; color:var(--text2); line-height:1.5; margin-bottom:10px; min-height:52px;}
+
+/* modal */
+.modal-bg{position:fixed; inset:0; background:rgba(3,5,12,.6); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:flex-end; justify-content:center;}
+@media(min-width:640px){.modal-bg{align-items:center;}}
+.modal{
+  background:var(--bg2); border:1px solid var(--border); border-radius:24px 24px 0 0; max-width:460px; width:100%;
+  padding:26px; animation:slideUp .3s ease;
+}
+@media(min-width:640px){.modal{border-radius:24px;}}
+@keyframes slideUp{from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+
+/* ============ PROFILE ============ */
+.avatar{
+  width:64px; height:64px; border-radius:20px; background:var(--grad); display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:24px; color:#fff; flex-shrink:0;
+}
+.badge{
+  display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 8px; border-radius:var(--radius-md);
+  border:1px solid var(--border); background:var(--surface); text-align:center; transition:.2s;
+}
+.badge.locked{opacity:.35; filter:grayscale(1);}
+.badge-icon{width:44px; height:44px; border-radius:14px; background:var(--grad); display:flex; align-items:center; justify-content:center;}
+.badge-icon svg{width:22px; height:22px; color:#fff;}
+.badge-name{font-size:12px; font-weight:600; line-height:1.3;}
+
+.settings-row{display:flex; align-items:center; justify-content:space-between; padding:15px 4px; border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;}
+.settings-row .sr-left{display:flex; align-items:center; gap:12px;}
+.settings-row .sr-icon{width:36px; height:36px; border-radius:10px; background:var(--surface2); display:flex; align-items:center; justify-content:center;}
+.settings-row .sr-icon svg{width:17px; height:17px;}
+.settings-row .sr-title{font-weight:600; font-size:14px;}
+.settings-row .sr-sub{font-size:12px; color:var(--text3);}
+.chev{width:16px; height:16px; color:var(--text3);}
+
+input.field{
+  width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:12px 14px;
+  color:var(--text); font-family:var(--font-body); font-size:16px;
+}
+input.field:focus{outline:2px solid var(--accent2); outline-offset:1px;}
+
+.section-title{font-size:19px; margin-bottom:4px;}
+.section-gap{margin-top:26px;}
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:50; display:flex; justify-content:space-around;
+  padding:9px 6px calc(9px + env(safe-area-inset-bottom));
+  background:var(--surface); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+}
+.nav-item{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text3); font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:12px; transition:.2s;}
+.nav-item svg{width:21px; height:21px;}
+.nav-item.active{color:var(--accent2);}
+
+/* back link */
+.back-link{display:inline-flex; align-items:center; gap:6px; color:var(--text2); font-size:13.5px; font-weight:600; margin-bottom:14px;}
+.back-link svg{width:15px; height:15px;}
+
+/* toast */
+#toast{
+  position:fixed; bottom:96px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0; z-index:200;
+  background:var(--surface2); border:1px solid var(--border); backdrop-filter:blur(14px);
+  padding:12px 20px; border-radius:100px; font-size:13.5px; font-weight:600; transition:.3s; pointer-events:none;
+  box-shadow:var(--shadow); white-space:nowrap;
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+@media(min-width:860px){#toast{bottom:30px;}}
+
+input[type="range"]{-webkit-appearance:none; appearance:none; height:6px; border-radius:100px; background:var(--surface2); outline:none;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--grad); border:3px solid var(--bg); box-shadow:0 2px 8px rgba(0,0,0,.3); cursor:pointer;}
+input[type="range"]::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:var(--accent1); border:3px solid var(--bg); cursor:pointer;}
+
+.reveal{animation:fadeUp .4s ease;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body data-theme="dark">
+<div id="toast"></div>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   Rӯйи Ман AI — Demo Mode SPA (vanilla JS, no build step)
+   ============================================================ */
+
+/* ---------- ICONS ---------- */
+const I = {
+  logo:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V8a5 5 0 0 1 5-5Z" stroke="#fff" stroke-width="1.7"/><path d="M8 12c0 3 2 5 4 5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="9.5" cy="9.5" r=".9" fill="#fff"/><circle cx="14.5" cy="9.5" r=".9" fill="#fff"/></svg>`,
+  home:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  camera:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.4" stroke="currentColor" stroke-width="2"/></svg>`,
+  calendar:`<svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  chart:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20v-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  user:`<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.2" r="3.6" stroke="currentColor" stroke-width="2"/><path d="M4.5 20c1.4-4 4-6 7.5-6s6.1 2 7.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.3" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.4M12 19v2.5M4.5 12H2M22 12h-2.5M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  moon:`<svg viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.4 8.4 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  scissors:`<svg viewBox="0 0 24 24" fill="none"><circle cx="6" cy="6" r="2.6" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="18" r="2.6" stroke="currentColor" stroke-width="2"/><path d="m8.2 7.8 12.3 10.7M20.5 5.5 7.9 16.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  bell:`<svg viewBox="0 0 24 24" fill="none"><path d="M6 10a6 6 0 0 1 12 0c0 4 1.4 5.4 2 6H4c.6-.6 2-2 2-6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.6-3 8.4-7 9.5C8 20.4 5 16.6 5 12V6l7-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m9 12 2 2 4-4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4.5 4.5L19 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  chevron:`<svg viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  upload:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4M8 8l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  droplet:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  flame:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 2s5 4.5 5 9.5A5 5 0 0 1 7 11c0-1.2.5-2 1-2.7C9 10 9 11.5 9.7 12c-.4-2.4 1-4 1.3-6.3.3 1 1.6 2 1.6 3.8 1-.6 1.4-1.8 1.4-2.5A7 7 0 0 1 17 15a5 5 0 0 1-10 0" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  gem:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 9 8 4h8l4 5-9 11L4 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 9h16M9.5 4 8 9l4 11 4-11-1.5-5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+  trophy:`<svg viewBox="0 0 24 24" fill="none"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4M10 19h4M12 15v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  spark:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  pencil:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17l-1 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  tag:`<svg viewBox="0 0 24 24" fill="none"><path d="M12.5 3H5a2 2 0 0 0-2 2v7.5a2 2 0 0 0 .6 1.4l9 9a2 2 0 0 0 2.8 0l7.1-7.1a2 2 0 0 0 0-2.8l-9-9A2 2 0 0 0 12.5 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor"/></svg>`,
+  download:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12M7 11l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  trash:`<svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V4.8A1.8 1.8 0 0 1 10.8 3h2.4A1.8 1.8 0 0 1 15 4.8V7m2 0-.7 12.3a2 2 0 0 1-2 1.7H9.7a2 2 0 0 1-2-1.7L7 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  palette:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 8 0 1 0 0 16c1.2 0 1.6-1 1-1.8-.5-.6-.2-1.7 1-1.7h1.5A3.5 3.5 0 0 0 19 12a9 8 0 0 0-7-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10.5" cy="7.3" r="1.1" fill="currentColor"/><circle cx="15" cy="8" r="1.1" fill="currentColor"/></svg>`,
+  plus:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  minus:`<svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  layers:`<svg viewBox="0 0 24 24" fill="none"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" stroke="currentColor" stroke-width="1.8"/></svg>`,
+  settings:`<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a1.8 1.8 0 0 0 .4 2l.1.1a2.2 2.2 0 1 1-3.1 3.1l-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.6v.2a2.2 2.2 0 1 1-4.4 0v-.1a1.8 1.8 0 0 0-1.2-1.6 1.8 1.8 0 0 0-2 .4l-.1.1a2.2 2.2 0 1 1-3.1-3.1l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.6-1.1H4.6a2.2 2.2 0 1 1 0-4.4h.1a1.8 1.8 0 0 0 1.6-1.2 1.8 1.8 0 0 0-.4-2l-.1-.1a2.2 2.2 0 1 1 3.1-3.1l.1.1a1.8 1.8 0 0 0 2 .4h.1a1.8 1.8 0 0 0 1.1-1.6V4.6a2.2 2.2 0 1 1 4.4 0v.1a1.8 1.8 0 0 0 1.1 1.6h.1a1.8 1.8 0 0 0 2-.4l.1-.1a2.2 2.2 0 1 1 3.1 3.1l-.1.1a1.8 1.8 0 0 0-.4 2v.1a1.8 1.8 0 0 0 1.6 1.1h.2a2.2 2.2 0 1 1 0 4.4h-.1a1.8 1.8 0 0 0-1.6 1.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+  arrows:`<svg viewBox="0 0 24 24" fill="none"><path d="M8 7 4 11l4 4M4 11h16M16 17l4-4-4-4M20 13H4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  eye:`<svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.8"/></svg>`,
+  moonEye:`<svg viewBox="0 0 24 24" fill="none"><path d="M3 15c1.5-3.5 4.5-6 9-6s7.5 2.5 9 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 16.5c1-1 2-1.5 3-1.5M15 15c1 0 2 .5 3 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  neck:`<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6.5" r="3.3" stroke="currentColor" stroke-width="1.8"/><path d="M9 9.5v3a3 3 0 0 0 3 3 3 3 0 0 0 3-3v-3M6 21c1-3 3.5-4.5 6-4.5s5 1.5 6 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  hair:`<svg viewBox="0 0 24 24" fill="none"><path d="M5 12c0-4.5 3-8 7-8s7 3.5 7 8c0 1-1 1-1.4.2C17 11 16.4 9.5 15 9.5c-1.2 0-1.6 1.2-2 2.4-.4-1.3-.9-2.6-2-2.6s-1.7 1.4-2.1 2.7c-.4-1.3-.9-2.5-2-2.5C6 9.5 5.4 11 4.9 12.5 4.6 13.2 5 12.7 5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 13v4a5 5 0 0 0 10 0v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  brow:`<svg viewBox="0 0 24 24" fill="none"><path d="M3.5 10c1.5-2.3 4-3.3 6.5-2.8M20.5 10c-1.5-2.3-4-3.3-6.5-2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  idcard:`<svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.4" stroke="currentColor" stroke-width="1.8"/><circle cx="8" cy="12" r="2.1" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 16.5c.6-1.5 1.5-2.2 2.5-2.2s1.9.7 2.5 2.2M14 10h5M14 13.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  cake:`<svg viewBox="0 0 24 24" fill="none"><path d="M4 21v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 18h16M8 13V9M12 13V9M16 13V9M12 9c-1 0-1-1-.5-1.8S12 5.5 12 5.5s1 1 .5 1.7S13 9 12 9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+};
+function icon(name,cls){return `<span class="${cls||''}" aria-hidden="true">${I[name]||''}</span>`}
+
+/* ---------- STATE ---------- */
+const DAY = 86400000;
+const todayKey = (d=new Date())=>d.toISOString().slice(0,10);
+const fmtDate = (k)=>{const d=new Date(k); return d.toLocaleDateString('tg-TJ',{day:'2-digit',month:'short'});}
+
+const defaultState = ()=>({
+  theme:'dark',
+  accent:'violet',
+  userName:'Меҳмон',
+  firstName:'', lastName:'', birthYear:null,
+  createdAt: todayKey(),
+  registered:false,
+  onboarded:false,
+  history: [],           // {date, quality, symmetry, dryness, redness, overall}
+  tasksByDay: {},         // {date:{morningPhoto:bool, routine:bool}}
+  iceEnabled:false,
+  reminders:{morningRoutine:true, morningPhoto:true, eveningRoutine:false},
+  streak:0,
+  skinType:null,          // {type, oil, sensitivity, date}
+  fullRoutine:{
+    am:[{id:'a1', name:'Тозакунанда', done:false}, {id:'a2', name:'Тоник', done:false}, {id:'a3', name:'Намнокунанда', done:false}, {id:'a4', name:'Кремии офтобӣ (SPF)', done:false}],
+    pm:[{id:'p1', name:'Тозакунандаи равған', done:false}, {id:'p2', name:'Тозакунанда', done:false}, {id:'p3', name:'Серум', done:false}, {id:'p4', name:'Кремии шабона', done:false}],
+  },
+  wellness:{},             // {date:{water:0, sleep:0, mood:null}}
+  notifLog:[],             // [{ts, text}]
+  thumbs:{},                // {date: dataURL small thumbnail} for before/after compare
+  fontScale:1,
+});
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem('rooyiman_state');
+    if(!raw) return seedDemo(defaultState());
+    const s = Object.assign(defaultState(), JSON.parse(raw));
+    return s;
+  }catch(e){ return seedDemo(defaultState()); }
+}
+function saveState(){ localStorage.setItem('rooyiman_state', JSON.stringify(state)); }
+
+function seedDemo(s){
+  // seed 13 days of plausible upward-trending demo history so charts/progress aren't empty on first run
+  let base = 70;
+  for(let i=13;i>=1;i--){
+    const d = new Date(Date.now()-i*DAY);
+    base += (Math.random()*2.4 - 0.6);
+    base = Math.min(base, 90);
+    const quality = clamp(Math.round(base+ rnd(-4,6)),55,99);
+    const symmetry = clamp(Math.round(base+ rnd(-6,4)),50,97);
+    const dryness = clamp(Math.round(30 - base*0.15 + rnd(-6,6)),4,60);
+    const redness = clamp(Math.round(25 - base*0.12 + rnd(-6,6)),3,55);
+    const eyeClarity = clamp(Math.round(base+ rnd(-8,6)),50,98);
+    const darkCircles = clamp(Math.round(28 - base*0.1 + rnd(-6,8)),5,55);
+    const eyebrows = clamp(Math.round(base+ rnd(-10,8)),50,96);
+    const neck = clamp(Math.round(base+ rnd(-8,6)),50,96);
+    const hair = clamp(Math.round(base+ rnd(-10,8)),45,95);
+    const overall = clamp(Math.round((quality+symmetry+(100-dryness)+(100-redness)+eyeClarity+(100-darkCircles)+eyebrows+neck+hair)/9),50,98);
+    s.history.push({date: todayKey(d), quality, symmetry, dryness, redness, eyeClarity, darkCircles, eyebrows, neck, hair, overall});
+    s.tasksByDay[todayKey(d)] = {morningPhoto:true, routine: Math.random()>0.15};
+  }
+  s.streak = 7;
+  return s;
+}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+let state = loadState();
+document.body.setAttribute('data-theme', state.theme);
+
+/* ---------- TOAST ---------- */
+let toastTimer;
+function toast(msg, log){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+  if(log!==false){
+    state.notifLog.unshift({ts:Date.now(), text:msg});
+    state.notifLog = state.notifLog.slice(0,40);
+    saveState();
+  }
+}
+
+/* ---------- ROUTER ---------- */
+const routes = ['home','analysis','routine','progress','hairstyle','profile','reminders','privacy','skintype','fullroutine','wellness','report','compare','tips','settings'];
+function currentRoute(){
+  const h = location.hash.replace('#/','');
+  return routes.includes(h) ? h : 'home';
+}
+window.addEventListener('hashchange', render);
+window.addEventListener('DOMContentLoaded', render);
+
+/* ---------- SHELL ---------- */
+const navItems = [
+  {r:'home', label:'Асосӣ', icon:'home'},
+  {r:'analysis', label:'Анализ', icon:'camera'},
+  {r:'routine', label:'Имрӯз', icon:'calendar'},
+  {r:'progress', label:'Пешрафт', icon:'chart'},
+  {r:'profile', label:'Профил', icon:'user'},
+];
+
+function shell(pageHtml){
+  const route = currentRoute();
+  return `
+  <div class="topbar">
+    <a href="#/home" class="brand">
+      <span class="brand-mark">${I.logo}</span>
+      Rӯйи Ман AI
+    </a>
+    <nav class="desktop-nav">
+      ${navItems.map(n=>`<a href="#/${n.r}" class="${route===n.r?'active':''}">${icon(n.icon)} ${n.label}</a>`).join('')}
+    </nav>
+    <div class="topbar-actions">
+      <span class="demo-chip">Реҷаи озмоишӣ</span>
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="Иваз кардани мавзӯъ">${icon(state.theme==='dark'?'sun':'moon')}</button>
+    </div>
+  </div>
+  <div class="page">${pageHtml}</div>
+  <div class="bottom-nav">
+    ${navItems.map(n=>`<a href="#/${n.r}" class="nav-item ${route===n.r?'active':''}">${icon(n.icon)}<span>${n.label}</span></a>`).join('')}
+  </div>
+  `;
+}
+
+function toggleTheme(){
+  state.theme = state.theme==='dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', state.theme);
+  saveState();
+  render();
+}
+
+/* ---------- DERIVED HELPERS ---------- */
+function todayScore(){
+  const h = state.history;
+  if(!h.length) return 78;
+  return h[h.length-1].overall;
+}
+function computeStreak(){
+  let s = 0;
+  let d = new Date();
+  // if today not done yet, start counting from yesterday
+  for(let i=0;i<400;i++){
+    const key = todayKey(new Date(Date.now()-i*DAY));
+    const t = state.tasksByDay[key];
+    if(t && (t.morningPhoto || t.routine)){ s++; } else { if(i===0) continue; break; }
+  }
+  return s;
+}
+function photosCount(){ return state.history.length; }
+
+/* ---------- RING RENDER (canvas) ---------- */
+function drawRing(canvas, percent, colorA, colorB, trackColor){
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = canvas.clientWidth;
+  canvas.width = size*dpr; canvas.height = size*dpr;
+  ctx.scale(dpr,dpr);
+  const cx=size/2, cy=size/2, r=size/2-8;
+  ctx.lineCap='round';
+  ctx.lineWidth=10;
+  ctx.strokeStyle = trackColor;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+  const grad = ctx.createLinearGradient(0,0,size,size);
+  grad.addColorStop(0,colorA); grad.addColorStop(1,colorB);
+  ctx.strokeStyle = grad;
+  const start = -Math.PI/2;
+  const end = start + (Math.PI*2)*(percent/100);
+  ctx.beginPath(); ctx.arc(cx,cy,r,start,end); ctx.stroke();
+}
+
+/* ================= PAGES ================= */
+
+function pageHome(){
+  const score = todayScore();
+  const streak = computeStreak();
+  return `
+  <div class="hero">
+    <span class="eyebrow">Rӯйи Ман AI ${state.firstName? '· Хуш омадед, '+state.firstName+' 👋' : ''}</span>
+    <h1>Ёрдамчии шахсии нигоҳубини намуди зоҳирӣ</h1>
+    <p class="tagline">Акси рӯзонаи худро гузоред, таҳлили визуалии AI-ро бигиред ва пешрафти пӯсти худро қадам ба қадам пайгирӣ кунед.</p>
+    <a href="#/analysis" class="btn btn-primary">${icon('camera')} Акси худро таҳлил кун</a>
+    <div class="stat-row">
+      <span class="stat-pill">${icon('flame')} ${streak} рӯз пайдарпай</span>
+      <span class="stat-pill">${icon('camera')} ${photosCount()} акс</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:22px; flex-wrap:wrap;">
+      <div class="ring-wrap" style="width:132px; height:132px;">
+        <canvas id="homeRing" width="132" height="132"></canvas>
+        <div class="ring-center">
+          <div class="ring-num" style="font-size:30px;">${score}</div>
+          <div class="ring-label">аз 100</div>
+        </div>
+      </div>
+      <div style="flex:1; min-width:180px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Индекси нигоҳубини имрӯз</div>
+        <p class="muted">Ин рақам аз таҳлили охирин акси шумо ҳисоб карда шудааст. Барои беҳтар кардани он реҷаи имрӯзаро иҷро кунед.</p>
+        <a href="#/routine" class="btn btn-ghost btn-sm" style="margin-top:12px;">Дидани вазифаҳои имрӯз ${icon('chevron')}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-links">
+    <a href="#/routine" class="quick-link">
+      <span class="qi">${icon('calendar')}</span>
+      <span class="qt">Реҷаи имрӯз</span>
+      <span class="qs">Субҳ, шом ва оби хунук</span>
+    </a>
+    <a href="#/progress" class="quick-link">
+      <span class="qi">${icon('chart')}</span>
+      <span class="qt">Пешрафти ман</span>
+      <span class="qs">7 / 30 / 90 рӯз</span>
+    </a>
+    <a href="#/hairstyle" class="quick-link">
+      <span class="qi">${icon('scissors')}</span>
+      <span class="qt">Прическа</span>
+      <span class="qs">Вариантҳои мувофиқ</span>
+    </a>
+    <a href="#/skintype" class="quick-link">
+      <span class="qi">${icon('droplet')}</span>
+      <span class="qt">Навъи пӯст</span>
+      <span class="qs">Санҷиши кӯтоҳ</span>
+    </a>
+    <a href="#/fullroutine" class="quick-link">
+      <span class="qi">${icon('layers')}</span>
+      <span class="qt">Реҷаи пурра</span>
+      <span class="qs">Қадамҳои субҳ/шом</span>
+    </a>
+    <a href="#/wellness" class="quick-link">
+      <span class="qi">${icon('spark')}</span>
+      <span class="qt">Об ва хоб</span>
+      <span class="qs">Пайгирии ҳаррӯза</span>
+    </a>
+    <a href="#/compare" class="quick-link">
+      <span class="qi">${icon('arrows')}</span>
+      <span class="qt">Пеш / Пас</span>
+      <span class="qs">Муқоисаи аксҳо</span>
+    </a>
+    <a href="#/tips" class="quick-link">
+      <span class="qi">${icon('book')}</span>
+      <span class="qt">Маслиҳатҳо</span>
+      <span class="qs">Мақолаҳои кӯтоҳ</span>
+    </a>
+  </div>
+  `;
+}
+
+let uploadedImgUrl = null, analysisStage = 'idle'; // idle | preview | loading | result
+let lastResult = null;
+
+function pageAnalysis(){
+  return `
+  <a href="#/home" class="back-link">${icon('back')} Ба асосӣ</a>
+  <h2 class="section-title">Таҳлили рӯй</h2>
+  <p class="muted" style="margin-bottom:16px;">Акси худро равшан, рӯ ба камера, бе филтр гузоред.</p>
+
+  <div class="card" id="analysisCard">
+    ${renderAnalysisBody()}
+  </div>
+  `;
+}
+
+function renderAnalysisBody(){
+  if(analysisStage==='idle'){
+    return `
+    <label class="upload-drop" for="fileInput">
+      ${icon('upload')}
+      <div style="font-weight:600; font-size:14.5px; margin-bottom:4px;">Акси худро гузоред</div>
+      <div class="small">Клик кунед ё файлро кашед — JPG, PNG</div>
+    </label>
+    <input id="fileInput" type="file" accept="image/*" style="display:none" onchange="onFileChosen(event)">
+    <div class="note-box">${icon('shield')}<span>Аксҳои шумо танҳо дар дастгоҳи шумо (localStorage) нигоҳ дошта мешаванд ва ба ягон сервер фиристода намешаванд — реҷаи озмоишӣ.</span></div>
+    `;
+  }
+  if(analysisStage==='preview'){
+    return `
+    <img src="${uploadedImgUrl}" class="analysis-preview" alt="Пешнамоиши акс">
+    <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="startAnalysis()">${icon('spark')} Таҳлилро сар кун</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:10px;" onclick="resetAnalysis()">Акси дигар</button>
+    `;
+  }
+  if(analysisStage==='loading'){
+    return `
+    <div class="scan-overlay">
+      <img src="${uploadedImgUrl}" class="analysis-preview" alt="Дар ҳоли таҳлил">
+      <div class="scan-line"></div>
+    </div>
+    <div class="loading-text">
+      <span class="dot-pulse"></span> AI рӯйи шуморо таҳлил карда истодааст...
+    </div>
+    `;
+  }
+  if(analysisStage==='result' && lastResult){
+    const r = lastResult;
+    return `
+    <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
+      <img src="${uploadedImgUrl}" style="width:64px; height:64px; border-radius:14px; object-fit:cover; border:1px solid var(--border);">
+      <div>
+        <h3 style="font-size:17px;">Натиҷаи таҳлил</h3>
+        <span class="chip chip-good">${icon('check')} Тайёр шуд</span>
+      </div>
+    </div>
+    <div class="eyebrow" style="margin-bottom:2px;">Умумӣ</div>
+    ${metricRow('Сифати акс', r.quality, false)}
+    ${metricRow('Симметрияи визуалӣ', r.symmetry, false)}
+    ${metricRow('Ҳолати умумии намоён', r.overall, false)}
+
+    <div class="eyebrow" style="margin:16px 0 2px;">Пӯст</div>
+    ${metricRow('Нишонаҳои хушкӣ', r.dryness, true)}
+    ${metricRow('Сурхшавии намоён', r.redness, true)}
+
+    <div class="eyebrow" style="margin:16px 0 2px;">${icon('eye')} Чашм ва атрофи он</div>
+    ${metricRow('Тозагии чашм', r.eyeClarity, false)}
+    ${metricRow('Доғи зери чашм', r.darkCircles, true)}
+
+    <div class="eyebrow" style="margin:16px 0 2px;">${icon('brow')} Қош</div>
+    ${metricRow('Шакл ва зичии қош', r.eyebrows, false)}
+
+    <div class="eyebrow" style="margin:16px 0 2px;">${icon('neck')} Гардан</div>
+    ${metricRow('Ҳолати пӯсти гардан', r.neck, false)}
+
+    <div class="eyebrow" style="margin:16px 0 2px;">${icon('hair')} Мӯй</div>
+    ${metricRow('Саломатии намоёни мӯй', r.hair, false)}
+
+    <div class="note-box">${icon('shield')}<span><b>Эзоҳ:</b> Ин таҳлил танҳо аз рӯи акс аст, тахминӣ мебошад ва ташхиси тиббӣ нест. Сайт инсонро аз рӯи «зебо/зишт» баҳо намедиҳад.</span></div>
+    <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="saveAnalysis()">${icon('check')} Захира кардан ба таърих</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:10px;" onclick="resetAnalysis()">Акси нав</button>
+    `;
+  }
+  return '';
+}
+
+function metricRow(name, val, inverse){
+  const display = inverse ? (val<20?'кам':val<45?'миёна':'зиёд') : val+'%';
+  const barVal = inverse ? 100-val : val;
+  return `
+  <div class="metric-row">
+    <span class="metric-name">${name}</span>
+    <div class="bar-track"><div class="bar-fill" style="width:${barVal}%"></div></div>
+    <span class="metric-val">${display}</span>
+  </div>`;
+}
+
+function onFileChosen(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  uploadedImgUrl = URL.createObjectURL(f);
+  analysisStage = 'preview';
+  render();
+}
+function resetAnalysis(){
+  analysisStage='idle'; uploadedImgUrl=null; lastResult=null; render();
+}
+function startAnalysis(){
+  analysisStage='loading'; render();
+  setTimeout(()=>{
+    const quality = clamp(Math.round(rnd(85,98)),0,100);
+    const symmetry = clamp(Math.round(rnd(78,95)),0,100);
+    const dryness = clamp(Math.round(rnd(5,32)),0,100);
+    const redness = clamp(Math.round(rnd(4,28)),0,100);
+    const eyeClarity = clamp(Math.round(rnd(75,96)),0,100);
+    const darkCircles = clamp(Math.round(rnd(8,40)),0,100);
+    const eyebrows = clamp(Math.round(rnd(70,95)),0,100);
+    const neck = clamp(Math.round(rnd(72,96)),0,100);
+    const hair = clamp(Math.round(rnd(70,94)),0,100);
+    const overall = clamp(Math.round((quality+symmetry+(100-dryness)+(100-redness)+eyeClarity+(100-darkCircles)+eyebrows+neck+hair)/9),0,100);
+    lastResult = {quality,symmetry,dryness,redness,eyeClarity,darkCircles,eyebrows,neck,hair,overall};
+    analysisStage='result';
+    render();
+    setTimeout(()=>{ document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.style.width); },50);
+  }, 1800);
+}
+function saveAnalysis(){
+  const key = todayKey();
+  const existingIdx = state.history.findIndex(h=>h.date===key);
+  const entry = Object.assign({date:key}, lastResult);
+  if(existingIdx>=0) state.history[existingIdx]=entry; else state.history.push(entry);
+  state.tasksByDay[key] = Object.assign({morningPhoto:true, routine:false}, state.tasksByDay[key]||{});
+  state.streak = computeStreak();
+  makeThumb(uploadedImgUrl, (dataUrl)=>{
+    if(dataUrl){
+      state.thumbs[key] = dataUrl;
+      // keep only the 12 most recent thumbnails to respect localStorage limits
+      const keys = Object.keys(state.thumbs).sort();
+      while(keys.length>12){ delete state.thumbs[keys.shift()]; }
+    }
+    saveState();
+  });
+  saveState();
+  toast('Акс ва натиҷа захира шуд ✅');
+  location.hash = '#/progress';
+}
+function makeThumb(url, cb){
+  if(!url) return cb(null);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = ()=>{
+    try{
+      const maxW = 320;
+      const scale = Math.min(1, maxW/img.width);
+      const c = document.createElement('canvas');
+      c.width = img.width*scale; c.height = img.height*scale;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',0.7));
+    }catch(e){ cb(null); }
+  };
+  img.onerror = ()=>cb(null);
+  img.src = url;
+}
+
+/* ---------- ROUTINE ---------- */
+function pageRoutine(){
+  const key = todayKey();
+  const t = state.tasksByDay[key] || {morningPhoto:false, routine:false};
+  const ice = state.iceEnabled;
+  return `
+  <h2 class="section-title">Реҷаи имрӯз</h2>
+  <p class="muted" style="margin-bottom:16px;">${new Date().toLocaleDateString('tg-TJ',{weekday:'long', day:'2-digit', month:'long'})}</p>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="eyebrow" style="margin-bottom:10px;">🌅 Реҷаи субҳ · 07:00–09:00</div>
+    <div class="task ${t.morningPhoto?'done':''}" onclick="toggleTask('morningPhoto')">
+      <span class="task-check">${icon('check')}</span>
+      <div class="task-body">
+        <div class="task-title ${t.morningPhoto?'strike':''}">Акси субҳро гир</div>
+        <div class="task-time">Барои муқоисаи дурусти пешрафт</div>
+      </div>
+    </div>
+    <div class="task ${t.routine?'done':''}" onclick="toggleTask('routine')">
+      <span class="task-check">${icon('check')}</span>
+      <div class="task-body">
+        <div class="task-title ${t.routine?'strike':''}">Реҷаи нигоҳубини худро иҷро кун</div>
+        <div class="task-time">Тоза кардан + намнок кардан</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+      <div class="eyebrow">🧊 Реҷаи оби хунук</div>
+      <div class="toggle ${ice?'on':''}" onclick="toggleIce()"></div>
+    </div>
+    ${ice ? `
+      <p class="muted">🔔 Вақти пешниҳодшуда: <b>07:30</b> — Реҷаи субҳ</p>
+      <div class="note-box">${icon('shield')}<span>Вақти пешниҳодшуда барои реҷаи субҳ аст. Яхро мустақиман ба пӯст муддати дароз нагузоред. Ин функсия танҳо хотиррасонӣ ва пайгирӣ мекунад — на ваъдаи натиҷаи косметикӣ.</span></div>
+    ` : `<p class="muted">Агар шумо компресси хунук истифода бурдан хоҳед, инро фаъол кунед то хотиррасонӣ ва пайгирии рӯзона гиред.</p>`}
+  </div>
+
+  <div class="section-gap">
+    <a href="#/reminders" class="btn btn-ghost btn-block">${icon('bell')} Танзими ёдоварӣ</a>
+  </div>
+  `;
+}
+function toggleTask(name){
+  const key = todayKey();
+  state.tasksByDay[key] = Object.assign({morningPhoto:false, routine:false}, state.tasksByDay[key]||{});
+  state.tasksByDay[key][name] = !state.tasksByDay[key][name];
+  state.streak = computeStreak();
+  saveState();
+  render();
+  toast(state.tasksByDay[key][name] ? 'Иҷро карда шуд ✅' : 'Бекор карда шуд');
+}
+function toggleIce(){
+  state.iceEnabled = !state.iceEnabled;
+  saveState(); render();
+}
+
+/* ---------- PROGRESS ---------- */
+let progressRange = 7;
+function pageProgress(){
+  const h = [...state.history].sort((a,b)=>a.date.localeCompare(b.date));
+  const slice = h.slice(-progressRange);
+  return `
+  <h2 class="section-title">Пешрафти ман</h2>
+  <p class="muted" style="margin-bottom:16px;">Индекси умумии нигоҳубин дар тӯли вақт.</p>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+      <div class="seg-control">
+        <button class="${progressRange===7?'active':''}" onclick="setRange(7)">7 рӯз</button>
+        <button class="${progressRange===30?'active':''}" onclick="setRange(30)">30 рӯз</button>
+        <button class="${progressRange===90?'active':''}" onclick="setRange(90)">90 рӯз</button>
+      </div>
+      ${slice.length>=2 ? `<span class="chip chip-good">${icon('spark')} ${slice[0].overall} → ${slice[slice.length-1].overall}</span>` : ''}
+    </div>
+    <div class="chart-wrap"><canvas id="lineChart" height="220"></canvas></div>
+    <div class="note-box">${icon('shield')}<span>Натиҷа метавонад аз равшанӣ, кунҷи рӯй ва сифати камера таъсир гирад.</span></div>
+  </div>
+
+  <div class="section-gap">
+    <h3 style="font-size:16px; margin-bottom:10px;">Таърихи аксҳо</h3>
+    ${h.length ? `<div class="history-strip">
+      ${[...h].reverse().map(e=>`
+        <div class="history-card">
+          <div class="history-thumb"></div>
+          <div class="history-score">${e.overall}</div>
+          <div class="history-date">${fmtDate(e.date)}</div>
+        </div>
+      `).join('')}
+    </div>` : `<p class="muted">Ҳанӯз таърих нест — акси аввалини худро таҳлил кунед.</p>`}
+  </div>
+  `;
+}
+function setRange(r){ progressRange=r; render(); }
+
+/* ---------- HAIRSTYLE ---------- */
+const hairstyles = [
+  {name:'Textured Crop', desc:'Кӯтоҳ ва бо бофти табиӣ дар боло — намуди муосир ва камхарҷ барои нигоҳубин.', reason:'Мувофиқ барои шакли рӯйи мудаввар ва байзашакл.', grad:'linear-gradient(135deg,#8B5CF6,#6366F1)'},
+  {name:'Crew Cut', desc:'Кӯтоҳи классикӣ бо тарафҳои фейд — амалӣ ва тоза.', reason:'Мувофиқ барои муҳити фаъол ва вақти ками нигоҳубин.', grad:'linear-gradient(135deg,#22D3EE,#3B82F6)'},
+  {name:'Low Fade', desc:'Гузариши мулоим аз кӯтоҳ ба дарозтар — таносуби хуб.', reason:'Диққатро ба хатти рӯй ба таври мулоим равона мекунад.', grad:'linear-gradient(135deg,#F5A623,#F26D6D)'},
+  {name:'Side Part', desc:'Ҷудокунии тарафӣ бо намуди муназзам ва расмӣ.', reason:'Мувофиқ барои шакли рӯйи дарозрӯя.', grad:'linear-gradient(135deg,#3DDC97,#22D3EE)'},
+  {name:'Middle Part', desc:'Ҷудокунии марказӣ — тренди муосир ва мулоим.', reason:'Таносуби рӯйро ба таври симметрӣ таъкид мекунад.', grad:'linear-gradient(135deg,#8B5CF6,#F26D6D)'},
+];
+function pageHairstyle(){
+  return `
+  <h2 class="section-title">Кадом прическа ба ман мувофиқ аст?</h2>
+  <p class="muted" style="margin-bottom:16px;">AI аз рӯи хусусиятҳои визуалии рӯй вариантҳо пешниҳод мекунад.</p>
+  <div class="grid grid-2 sm:grid-3">
+    ${hairstyles.map((h,i)=>`
+      <div class="hs-card">
+        <div class="hs-thumb" style="background:${h.grad}">${icon('scissors')}</div>
+        <div class="hs-body">
+          <div class="hs-name">⭐ ${h.name}</div>
+          <div class="hs-desc">${h.desc}</div>
+          <button class="btn btn-ghost btn-sm btn-block" onclick="openHsModal(${i})">${icon('spark')} Дидан</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+  `;
+}
+function openHsModal(i){
+  const h = hairstyles[i];
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.onclick=(e)=>{ if(e.target===bg) bg.remove(); };
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="hs-thumb" style="background:${h.grad}; border-radius:16px; height:150px; margin-bottom:16px;">${icon('scissors')}</div>
+      <h3 style="font-size:20px; margin-bottom:8px;">${h.name}</h3>
+      <p class="muted" style="margin-bottom:14px;">${h.desc}</p>
+      <div class="note-box" style="background:var(--surface2); border-color:var(--border);">
+        <span>${icon('spark')}</span><span><b>Чаро пешниҳод шуд:</b> ${h.reason}</span>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="this.closest('.modal-bg').remove()">Фаҳмидам</button>
+    </div>
+  `;
+  document.body.appendChild(bg);
+}
+
+/* ---------- PROFILE ---------- */
+const achievementDefs = [
+  {id:'d7', name:'7 рӯз пайдарпай', icon:'flame', test:s=>computeStreak()>=7},
+  {id:'d14', name:'14 рӯз пайдарпай', icon:'flame', test:s=>computeStreak()>=14},
+  {id:'d30', name:'30 рӯз пайдарпай', icon:'gem', test:s=>computeStreak()>=30},
+  {id:'p10', name:'10 акси субҳ', icon:'camera', test:s=>photosCount()>=10},
+  {id:'first', name:'Пешрафти аввал', icon:'trophy', test:s=>photosCount()>=1},
+  {id:'skin', name:'Навъи пӯст муайян шуд', icon:'droplet', test:s=>!!s.skinType},
+  {id:'amroutine', name:'Реҷаи субҳ пурра', icon:'layers', test:s=>s.fullRoutine.am.every(x=>x.done)},
+  {id:'pmroutine', name:'Реҷаи шом пурра', icon:'layers', test:s=>s.fullRoutine.pm.every(x=>x.done)},
+  {id:'water', name:'8 стакан об', icon:'droplet', test:s=>((s.wellness[todayKey()]||{}).water||0)>=8},
+  {id:'compare', name:'Аксҳои муқоисашуда', icon:'arrows', test:s=>Object.keys(s.thumbs).length>=2},
+];
+function pageProfile(){
+  return `
+  <h2 class="section-title">Профили ман</h2>
+  <div class="card" style="margin:16px 0; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <div class="avatar">${(state.firstName||state.userName||'М').slice(0,1).toUpperCase()}</div>
+    <div style="flex:1; min-width:150px;">
+      <div style="font-weight:700; font-size:17px; display:flex; align-items:center; gap:8px;">
+        ${state.firstName ? (state.firstName+' '+state.lastName) : state.userName}
+        <button class="icon-btn" style="width:28px;height:28px;" onclick="editName()">${icon('pencil')}</button>
+      </div>
+      <div class="small">${state.birthYear ? `${icon('cake')} Соли таваллуд: ${state.birthYear} · ` : ''}Аз ${fmtDate(state.createdAt)} бо мо</div>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:22px;">${computeStreak()}</div><div class="small">рӯз пайдарпай</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:22px;">${photosCount()}</div><div class="small">акс</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:22px;">${todayScore()}</div><div class="small">индекси охирин</div></div>
+  </div>
+
+  <div class="section-gap">
+    <h3 style="font-size:16px; margin-bottom:10px;">${icon('trophy')} Дастовардҳо</h3>
+    <div class="grid grid-3">
+      ${achievementDefs.map(a=>{
+        const unlocked = a.test(state);
+        return `<div class="badge ${unlocked?'':'locked'}">
+          <div class="badge-icon">${icon(a.icon)}</div>
+          <div class="badge-name">${a.name}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="section-gap card">
+    <a href="#/skintype" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('droplet')}</span><div><div class="sr-title">Навъи пӯст</div><div class="sr-sub">${state.skinType? skinTypeLabels[state.skinType.type] : 'Ҳанӯз муайян нашуд'}</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/fullroutine" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('layers')}</span><div><div class="sr-title">Реҷаи пурра</div><div class="sr-sub">Қадамҳои субҳ ва шом</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/wellness" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('spark')}</span><div><div class="sr-title">Об ва хоб</div><div class="sr-sub">Пайгирии ҳаррӯза</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/report" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('chart')}</span><div><div class="sr-title">Ҳисобот</div><div class="sr-sub">Ҳафтагӣ / моҳона</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/compare" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('arrows')}</span><div><div class="sr-title">Пеш / Пас</div><div class="sr-sub">Муқоисаи аксҳо</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/tips" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('book')}</span><div><div class="sr-title">Маслиҳатҳо</div><div class="sr-sub">Мақолаҳои кӯтоҳ</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/reminders" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('bell')}</span><div><div class="sr-title">Ёдоварӣ</div><div class="sr-sub">Хотиррасониҳои рӯзона</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/settings" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('settings')}</span><div><div class="sr-title">Танзимот</div><div class="sr-sub">Мавзӯъ, экспорт, тоза кардани маълумот</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+    <a href="#/privacy" class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('shield')}</span><div><div class="sr-title">Махфияти шумо</div><div class="sr-sub">Сиёсати нигоҳдории маълумот</div></div></div>
+      <span class="chev">${icon('chevron')}</span>
+    </a>
+  </div>
+  `;
+}
+function editName(){
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.onclick=(e)=>{ if(e.target===bg) bg.remove(); };
+  bg.innerHTML = `
+    <div class="modal">
+      <h3 style="font-size:18px; margin-bottom:14px;">Номи худро нависед</h3>
+      <input class="field" id="nameInput" value="${state.userName}" maxlength="24">
+      <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="saveName()">Захира кардан</button>
+    </div>`;
+  document.body.appendChild(bg);
+  setTimeout(()=>document.getElementById('nameInput').focus(),50);
+}
+function saveName(){
+  const v = document.getElementById('nameInput').value.trim();
+  if(v){ state.userName=v; saveState(); }
+  document.querySelector('.modal-bg').remove();
+  render();
+}
+
+/* ---------- REMINDERS ---------- */
+function pageReminders(){
+  const r = state.reminders;
+  const items = [
+    {k:'morningRoutine', label:'🌅 Реҷаи субҳ', sub:'Хотиррасонии тоза кардан ва намнок кардан'},
+    {k:'morningPhoto', label:'📸 Акси субҳ', sub:'Барои пайгирии дурусти пешрафт'},
+    {k:'eveningRoutine', label:'🌙 Реҷаи шом', sub:'Хотиррасонии нигоҳубини шабона'},
+  ];
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">Ёдоварӣ</h2>
+  <p class="muted" style="margin-bottom:16px;">Вақти хотиррасониро интихоб кунед.</p>
+  <div class="card">
+    ${items.map(it=>`
+      <div class="settings-row">
+        <div class="sr-left"><div><div class="sr-title">${it.label}</div><div class="sr-sub">${it.sub}</div></div></div>
+        <div class="toggle ${r[it.k]?'on':''}" onclick="toggleReminder('${it.k}')"></div>
+      </div>
+    `).join('')}
+  </div>
+  <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="toast('Ёдоварӣ фаъол шуд 🔔')">${icon('bell')} Фаъол кардан</button>
+  `;
+}
+function toggleReminder(k){
+  state.reminders[k] = !state.reminders[k];
+  saveState(); render();
+}
+
+/* ---------- PRIVACY ---------- */
+function pagePrivacy(){
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('shield')} Махфияти шумо</h2>
+  <div class="card" style="margin-top:16px;">
+    <p class="muted" style="line-height:1.8;">
+      Аксҳои шумо маълумоти шахсӣ мебошанд. Пеш аз истифодаи production, нигоҳдорӣ ва коркарди аксҳоро бо сиёсати равшани махфият танзим кунед.
+    </p>
+    <div class="note-box" style="margin-top:16px;">${icon('shield')}<span>Дар Реҷаи озмоишӣ (Demo Mode) ин барнома маълумоти fake истифода мебарад ва аксҳо танҳо дар браузери шумо (localStorage) нигоҳ дошта мешаванд — ба ягон сервер фиристода намешаванд.</span></div>
+    <div class="note-box">${icon('shield')}<span>Ин сайт инсонро аз рӯи «зебо/зишт» баҳо намедиҳад ва ташхиси тиббӣ намегузорад. Натиҷаҳо танҳо таҳлили визуалӣ ва тахминӣ мебошанд.</span></div>
+  </div>
+  `;
+}
+
+/* ---------- SKIN TYPE QUIZ ---------- */
+const skinTypeLabels = {oily:'Равғанӣ', dry:'Хушк', combo:'Омехта', normal:'Муқаррарӣ', sensitive:'Ҳассос'};
+const skinQuizQuestions = [
+  {q:'Пас аз шустани рӯй пӯсти шумо чӣ гуна ҳис мешавад?', opts:[
+    {t:'Дарҳол равған мешавад', v:'oily'}, {t:'Танг ва хушк', v:'dry'},
+    {t:'T-минтақа равған, рухсораҳо хушк', v:'combo'}, {t:'Мулоим ва мутавозин', v:'normal'}]},
+  {q:'Пӯсти шумо чанд бор дар як рӯз ялоқ мезанад?', opts:[
+    {t:'Зуд-зуд, тамоми рӯз', v:'oily'}, {t:'Кам, баъзан пӯст мекафад', v:'dry'},
+    {t:'Танҳо дар пешонӣ ва бинӣ', v:'combo'}, {t:'Кам, ба таври муқаррарӣ', v:'normal'}]},
+  {q:'Оё пӯсти шумо ба маҳсулоти нав зуд вокуниш нишон медиҳад (сурх/сӯзиш)?', opts:[
+    {t:'Ҳамеша, хеле ҳассос', v:'sensitive'}, {t:'Баъзан', v:'combo'},
+    {t:'Кам', v:'normal'}, {t:'Тақрибан ҳеч гоҳ', v:'oily'}]},
+];
+let quizStep = 0, quizAnswers = [];
+function pageSkinType(){
+  if(state.skinType && quizStep===0 && !window.__retakeQuiz){
+    const st = state.skinType;
+    return `
+    <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+    <h2 class="section-title">${icon('droplet')} Навъи пӯсти шумо</h2>
+    <div class="card" style="margin-top:16px; text-align:center;">
+      <div class="avatar" style="margin:0 auto 14px;">${skinTypeLabels[st.type][0]}</div>
+      <h3 style="font-size:22px;">${skinTypeLabels[st.type]}</h3>
+      <p class="muted" style="margin-top:8px;">Муайян шуд дар ${fmtDate(st.date)}</p>
+      <div class="note-box" style="text-align:right; margin-top:16px;">${icon('shield')}<span>Тавсияи умумист, на ташхиси дерматологӣ. Барои мушкилоти ҷиддии пӯст ба духтур муроҷиат кунед.</span></div>
+      <button class="btn btn-ghost btn-block" style="margin-top:14px;" onclick="window.__retakeQuiz=true; quizStep=0; quizAnswers=[]; render();">Санҷиши дигар гузаронед</button>
+    </div>`;
+  }
+  if(quizStep >= skinQuizQuestions.length){
+    const counts={};
+    quizAnswers.forEach(v=>counts[v]=(counts[v]||0)+1);
+    const type = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+    state.skinType = {type, date:todayKey()};
+    saveState(); window.__retakeQuiz=false;
+    setTimeout(()=>{ quizStep=0; quizAnswers=[]; render(); },10);
+    return `<div class="card" style="text-align:center; padding:40px;"><span class="dot-pulse"></span></div>`;
+  }
+  const cur = skinQuizQuestions[quizStep];
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('droplet')} Санҷиши навъи пӯст</h2>
+  <p class="muted" style="margin-bottom:16px;">Савол ${quizStep+1} аз ${skinQuizQuestions.length}</p>
+  <div class="card">
+    <h3 style="font-size:17px; margin-bottom:16px;">${cur.q}</h3>
+    ${cur.opts.map(o=>`<button class="btn btn-ghost btn-block" style="margin-bottom:10px; text-align:right; justify-content:flex-start;" onclick="answerQuiz('${o.v}')">${o.t}</button>`).join('')}
+  </div>`;
+}
+function answerQuiz(v){ quizAnswers.push(v); quizStep++; render(); }
+
+/* ---------- FULL ROUTINE BUILDER ---------- */
+function pageFullRoutine(){
+  const r = state.fullRoutine;
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('layers')} Реҷаи пурра</h2>
+  <p class="muted" style="margin-bottom:16px;">Қадамҳои худро илова/тағйир диҳед ва ҳар рӯз қайд кунед.</p>
+  ${routineBlock('am','🌅 Реҷаи субҳ', r.am)}
+  ${routineBlock('pm','🌙 Реҷаи шом', r.pm)}
+  `;
+}
+function routineBlock(key, title, steps){
+  return `
+  <div class="card" style="margin-bottom:16px;">
+    <div class="eyebrow" style="margin-bottom:10px;">${title}</div>
+    ${steps.map(s=>`
+      <div class="task ${s.done?'done':''}" onclick="toggleRoutineStep('${key}','${s.id}')">
+        <span class="task-check">${icon('check')}</span>
+        <div class="task-body"><div class="task-title ${s.done?'strike':''}">${s.name}</div></div>
+        <button class="icon-btn" style="width:30px;height:30px;" onclick="event.stopPropagation(); removeRoutineStep('${key}','${s.id}')">${icon('trash')}</button>
+      </div>
+    `).join('')}
+    <div style="display:flex; gap:8px; margin-top:10px;">
+      <input class="field" id="newStep_${key}" placeholder="Қадами нав...">
+      <button class="btn btn-primary btn-sm" onclick="addRoutineStep('${key}')">${icon('plus')}</button>
+    </div>
+  </div>`;
+}
+function toggleRoutineStep(key,id){
+  const step = state.fullRoutine[key].find(s=>s.id===id);
+  if(step) step.done = !step.done;
+  saveState(); render();
+}
+function removeRoutineStep(key,id){
+  state.fullRoutine[key] = state.fullRoutine[key].filter(s=>s.id!==id);
+  saveState(); render();
+}
+function addRoutineStep(key){
+  const inp = document.getElementById('newStep_'+key);
+  const v = inp.value.trim();
+  if(!v) return;
+  state.fullRoutine[key].push({id:'s'+Date.now(), name:v, done:false});
+  saveState(); render();
+  toast('Қадам илова шуд');
+}
+
+/* ---------- WELLNESS (WATER / SLEEP) ---------- */
+function pageWellness(){
+  const key = todayKey();
+  const w = state.wellness[key] || {water:0, sleep:0, mood:null};
+  const moods = [{v:'great', e:'😄', l:'Аъло'},{v:'ok', e:'🙂', l:'Хуб'},{v:'tired', e:'😴', l:'Хаста'},{v:'bad', e:'😣', l:'Бад'}];
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('spark')} Об ва хоб</h2>
+  <p class="muted" style="margin-bottom:16px;">Нӯшидани об ва хоби кофӣ ба ҳолати пӯст таъсир мерасонанд.</p>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="eyebrow">${icon('droplet')} Об имрӯз</div>
+      <div style="font-family:var(--font-display); font-weight:700;">${w.water} / 8 стакан</div>
+    </div>
+    <div style="display:flex; gap:6px; margin:14px 0; flex-wrap:wrap;">
+      ${Array.from({length:8}).map((_,i)=>`<span onclick="setWater(${i+1})" style="cursor:pointer; width:28px; height:34px; border-radius:8px; background:${i<w.water?'var(--grad)':'var(--surface2)'}; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">${icon('droplet')}</span>`).join('')}
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="setWater(${Math.max(0,w.water-1)})">${icon('minus')}</button>
+      <button class="btn btn-ghost btn-sm" onclick="setWater(${Math.min(8,w.water+1)})">${icon('plus')}</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="eyebrow" style="margin-bottom:12px;">🌙 Хоб дар шаби гузашта</div>
+    <input type="range" min="0" max="12" step="0.5" value="${w.sleep}" style="width:100%;" oninput="setSleep(this.value)">
+    <div style="text-align:center; font-family:var(--font-display); font-weight:700; font-size:20px; margin-top:8px;">${w.sleep} соат</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow" style="margin-bottom:12px;">Ҳолати имрӯза</div>
+    <div class="grid grid-3">
+      ${moods.map(m=>`<div class="badge ${w.mood===m.v?'':''}" style="cursor:pointer; ${w.mood===m.v?'border-color:var(--accent2);':''}" onclick="setMood('${m.v}')">
+        <div style="font-size:26px;">${m.e}</div><div class="badge-name">${m.l}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  `;
+}
+function todayWellness(){
+  const key = todayKey();
+  if(!state.wellness[key]) state.wellness[key] = {water:0, sleep:0, mood:null};
+  return state.wellness[key];
+}
+function setWater(v){ todayWellness().water = clamp(v,0,8); saveState(); render(); }
+function setSleep(v){ todayWellness().sleep = parseFloat(v); saveState(); render(); }
+function setMood(v){ todayWellness().mood = v; saveState(); render(); toast('Ҳолат сабт шуд'); }
+
+/* ---------- REPORT ---------- */
+function pageReport(){
+  const h = [...state.history].sort((a,b)=>a.date.localeCompare(b.date));
+  const last7 = h.slice(-7);
+  const avg = arr=> arr.length? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+  const avgOverall = avg(last7.map(x=>x.overall));
+  const avgDry = avg(last7.map(x=>x.dryness));
+  const avgRed = avg(last7.map(x=>x.redness));
+  const daysActive = Object.values(state.tasksByDay).filter(t=>t.morningPhoto||t.routine).length;
+  const waterDays = Object.values(state.wellness).filter(w=>w.water>=8).length;
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('chart')} Ҳисоботи ҳафтагӣ</h2>
+  <p class="muted" style="margin-bottom:16px;">Ҷамъбасти 7 рӯзи охир.</p>
+  <div class="grid grid-2 sm:grid-3">
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${avgOverall}</div><div class="small">миёнаи индекс</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${avgDry}%</div><div class="small">миёнаи хушкӣ</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${avgRed}%</div><div class="small">миёнаи сурхшавӣ</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${daysActive}</div><div class="small">рӯзҳои фаъол</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${waterDays}</div><div class="small">рӯзи об-8-стакон</div></div>
+    <div class="card tight" style="text-align:center;"><div class="ring-num" style="font-size:24px;">${computeStreak()}</div><div class="small">streak</div></div>
+  </div>
+  <div class="section-gap card">
+    <div class="eyebrow" style="margin-bottom:10px;">Хулоса</div>
+    <p class="muted" style="line-height:1.8;">
+      ${avgOverall>=80? 'Ҳолати умумии пӯсти шумо дар сатҳи хуб қарор дорад — ҳамин тавр давом диҳед!' : avgOverall>=60 ? 'Пешрафти шумо устувор аст. Иҷрои реҷаи ҳаррӯза ва нӯшидани об метавонад натиҷаро беҳтар кунад.' : 'Барои беҳтар кардани индекс, реҷаи субҳ/шомро мунтазам иҷро кунед ва акси нав гузоред.'}
+    </p>
+  </div>
+  `;
+}
+
+/* ---------- COMPARE (BEFORE/AFTER SLIDER) ---------- */
+function pageCompare(){
+  const dates = Object.keys(state.thumbs).sort();
+  if(dates.length<2){
+    return `
+    <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+    <h2 class="section-title">${icon('arrows')} Муқоисаи пеш/пас</h2>
+    <div class="card" style="margin-top:16px; text-align:center; padding:36px 20px;">
+      <p class="muted">Барои муқоиса ҳадди ақал 2 акси захирашуда лозим аст. Дар саҳифаи «Анализ» акс гузоред ва захира кунед.</p>
+      <a href="#/analysis" class="btn btn-primary" style="margin-top:14px;">${icon('camera')} Гузоштани акс</a>
+    </div>`;
+  }
+  const beforeD = dates[0], afterD = dates[dates.length-1];
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('arrows')} Муқоисаи пеш/пас</h2>
+  <p class="muted" style="margin-bottom:16px;">${fmtDate(beforeD)} → ${fmtDate(afterD)}</p>
+  <div class="card">
+    <div id="compareWrap" style="position:relative; width:100%; aspect-ratio:4/3; border-radius:14px; overflow:hidden; border:1px solid var(--border); user-select:none;">
+      <img src="${state.thumbs[afterD]}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+      <div id="compareBeforeLayer" style="position:absolute; inset:0; width:50%; overflow:hidden;">
+        <img src="${state.thumbs[beforeD]}" style="position:absolute; inset:0; width:${document.getElementById('compareWrap')?document.getElementById('compareWrap').offsetWidth:300}px; max-width:none; height:100%; object-fit:cover;" id="compareBeforeImg">
+      </div>
+      <div id="compareHandle" style="position:absolute; top:0; bottom:0; left:50%; width:3px; background:#fff; box-shadow:0 0 10px rgba(0,0,0,.5); cursor:ew-resize;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:34px; height:34px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; color:#111; box-shadow:0 4px 12px rgba(0,0,0,.4);">${icon('arrows')}</div>
+      </div>
+      <span class="chip chip-good" style="position:absolute; top:10px; left:10px;">Пеш</span>
+      <span class="chip chip-good" style="position:absolute; top:10px; right:10px;">Пас</span>
+    </div>
+    <input type="range" min="0" max="100" value="50" id="compareSlider" style="width:100%; margin-top:14px;" oninput="updateCompare(this.value)">
+  </div>
+  <div class="note-box">${icon('shield')}<span>Натиҷа метавонад аз равшанӣ, кунҷи рӯй ва сифати камера таъсир гирад — на танҳо аз реҷаи нигоҳубин.</span></div>
+  `;
+}
+function updateCompare(val){
+  const wrap = document.getElementById('compareWrap');
+  const layer = document.getElementById('compareBeforeLayer');
+  const img = document.getElementById('compareBeforeImg');
+  if(!wrap||!layer) return;
+  const w = wrap.offsetWidth;
+  layer.style.width = val+'%';
+  img.style.width = w+'px';
+  document.getElementById('compareHandle').style.left = val+'%';
+}
+
+/* ---------- TIPS LIBRARY ---------- */
+const tipArticles = [
+  {cat:'Нигоҳубин', title:'Тартиби дурусти истифодаи маҳсулот', body:'Аз сабук ба вазнин гузаред: тозакунанда → тоник → серум → намнокунанда → крем/SPF. Ин ба ҷаббиши беҳтари ҳар маҳсулот кӯмак мекунад.'},
+  {cat:'Об', title:'Чаро об барои пӯст муҳим аст', body:'Нӯшидани оби кофӣ ба нигоҳ доштани эластикии пӯст кӯмак мекунад, аммо натанҳо об мушкилоти пӯстро ҳал намекунад.'},
+  {cat:'Офтоб', title:'SPF — қадами фаромӯшнашаванда', body:'Кремии офтобиро ҳар рӯз, ҳатто дар рӯзҳои абрнок, истифода баред — ин муҳимтарин қадами пешгирикунанда аст.'},
+  {cat:'Хоб', title:'Хоби кофӣ ва намуди зоҳирӣ', body:'7-9 соат хоб ба барқарорсозии пӯст кӯмак мекунад. Норасоии хоб метавонад ба доғҳои зери чашм оварда расонад.'},
+  {cat:'Мӯй', title:'Интихоби прическа мувофиқи шакли рӯй', body:'Прическа метавонад таносуби рӯйро ба таври визуалӣ мутавозин кунад — масалан фейди паст барои рӯйи мудаввар.'},
+  {cat:'Нигоҳубин', title:'Аз шустани аз ҳад зиёд худдорӣ кунед', body:'Шустани зиёдатии рӯй метавонад равғани табиии пӯстро аз байн бурда, хушкӣ ва таҳрикро зиёд кунад.'},
+];
+let tipFilter = 'Ҳама';
+function pageTips(){
+  const cats = ['Ҳама', ...new Set(tipArticles.map(t=>t.cat))];
+  const list = tipFilter==='Ҳама' ? tipArticles : tipArticles.filter(t=>t.cat===tipFilter);
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('book')} Маслиҳатҳо</h2>
+  <div style="display:flex; gap:8px; overflow-x:auto; margin:14px 0;">
+    ${cats.map(c=>`<button class="chip ${tipFilter===c?'chip-good':''}" style="border:1px solid var(--border); background:${tipFilter===c?'':'var(--surface)'}; flex-shrink:0;" onclick="tipFilter='${c}'; render();">${c}</button>`).join('')}
+  </div>
+  <div class="grid grid-2">
+    ${list.map(t=>`
+      <div class="card tight">
+        <span class="chip chip-amber" style="margin-bottom:8px;">${icon('tag')} ${t.cat}</span>
+        <h3 style="font-size:15px; margin-bottom:6px;">${t.title}</h3>
+        <p class="muted" style="font-size:12.5px;">${t.body}</p>
+      </div>
+    `).join('')}
+  </div>
+  `;
+}
+
+/* ---------- SETTINGS ---------- */
+const accentPalettes = {
+  violet:['#8B5CF6','#22D3EE'], sunset:['#F5A623','#F26D6D'], mint:['#3DDC97','#22D3EE'], rose:['#F472B6','#8B5CF6'],
+};
+function applyAccent(){
+  const p = accentPalettes[state.accent] || accentPalettes.violet;
+  document.documentElement.style.setProperty('--accent1', p[0]);
+  document.documentElement.style.setProperty('--accent2', p[1]);
+}
+function pageSettings(){
+  return `
+  <a href="#/profile" class="back-link">${icon('back')} Ба профил</a>
+  <h2 class="section-title">${icon('settings')} Танзимот</h2>
+
+  <div class="card" style="margin:16px 0;">
+    <div class="eyebrow" style="margin-bottom:12px;">${icon('palette')} Ранги акцентӣ</div>
+    <div style="display:flex; gap:10px;">
+      ${Object.keys(accentPalettes).map(k=>`
+        <button onclick="setAccent('${k}')" style="width:38px; height:38px; border-radius:50%; border:2px solid ${state.accent===k?'var(--text)':'transparent'}; background:linear-gradient(135deg,${accentPalettes[k][0]},${accentPalettes[k][1]});"></button>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="settings-row">
+      <div class="sr-left"><span class="sr-icon">${icon('sun')}</span><div><div class="sr-title">Мавзӯи равшан/торик</div></div></div>
+      <div class="toggle ${state.theme==='dark'?'on':''}" onclick="toggleTheme()"></div>
+    </div>
+    <div class="settings-row">
+      <div class="sr-left"><span class="sr-icon">A</span><div><div class="sr-title">Андозаи матн</div></div></div>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="setFontScale(-0.05)">${icon('minus')}</button>
+        <button class="btn btn-ghost btn-sm" onclick="setFontScale(0.05)">${icon('plus')}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="eyebrow" style="margin-bottom:10px;">${icon('bell')} Таърихи огоҳиномаҳо</div>
+    ${state.notifLog.length ? state.notifLog.slice(0,8).map(n=>`
+      <div class="settings-row"><div class="sr-title" style="font-weight:500;">${n.text}</div><span class="small">${new Date(n.ts).toLocaleTimeString('tg-TJ',{hour:'2-digit',minute:'2-digit'})}</span></div>
+    `).join('') : `<p class="muted">Ҳанӯз огоҳинома нест.</p>`}
+  </div>
+
+  <div class="card">
+    <div class="eyebrow" style="margin-bottom:12px;">Маълумот</div>
+    <button class="btn btn-ghost btn-block" style="margin-bottom:10px;" onclick="exportData()">${icon('download')} Содирот кардани маълумот (JSON)</button>
+    <button class="btn btn-ghost btn-block" style="color:var(--danger);" onclick="resetData()">${icon('trash')} Тоза кардани ҳамаи маълумот</button>
+  </div>
+  `;
+}
+function setAccent(k){ state.accent = k; applyAccent(); saveState(); render(); }
+function setFontScale(delta){
+  state.fontScale = clamp(Math.round((state.fontScale+delta)*100)/100, 0.85, 1.25);
+  document.getElementById('app').style.fontSize = state.fontScale+'em';
+  saveState();
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'rooyiman-data.json'; a.click();
+  toast('Маълумот содир шуд');
+}
+function resetData(){
+  if(!confirm('Оё мутмаин ҳастед? Ҳамаи маълумоти шумо пок карда мешавад.')) return;
+  localStorage.removeItem('rooyiman_state');
+  location.hash = '#/home';
+  location.reload();
+}
+
+/* ---------- REGISTRATION GATE ---------- */
+function renderRegistration(){
+  const app = document.getElementById('app');
+  const thisYear = new Date().getFullYear();
+  app.innerHTML = `
+  <div class="reg-screen">
+    <div class="reg-card reveal">
+      <div class="brand-mark" style="width:52px; height:52px; border-radius:16px; margin:0 auto 18px;">${I.logo}</div>
+      <h1 style="text-align:center; font-size:24px; margin-bottom:6px;">Rӯйи Ман AI</h1>
+      <p class="muted" style="text-align:center; margin-bottom:22px;">Ёрдамчии шахсии нигоҳубини намуди зоҳирӣ</p>
+
+      <div class="eyebrow" style="margin-bottom:14px;">${icon('idcard')} Бақайдгирӣ</div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label class="small" style="display:block; margin-bottom:6px;">Ном</label>
+          <input class="field" id="regFirst" placeholder="Масалан: Азиз" maxlength="24">
+        </div>
+        <div>
+          <label class="small" style="display:block; margin-bottom:6px;">Фамилия</label>
+          <input class="field" id="regLast" placeholder="Масалан: Раҳимов" maxlength="24">
+        </div>
+        <div>
+          <label class="small" style="display:block; margin-bottom:6px;">Соли таваллуд</label>
+          <input class="field" id="regYear" type="number" inputmode="numeric" placeholder="Масалан: 2000" min="1930" max="${thisYear}">
+        </div>
+      </div>
+      <div id="regError" class="note-box" style="display:none; margin-top:14px;">${icon('shield')}<span id="regErrorText"></span></div>
+      <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="submitRegistration()">${icon('check')} Бақайдгирӣ ва оғоз</button>
+      <p class="small" style="margin-top:14px; text-align:center; line-height:1.6;">Ин барномаи Реҷаи озмоишӣ (Demo Mode) аст — маълумоти шумо танҳо дар дастгоҳи худи шумо (localStorage) нигоҳ дошта мешавад ва ба ягон сервер фиристода намешавад.</p>
+    </div>
+  </div>`;
+}
+function submitRegistration(){
+  const first = document.getElementById('regFirst').value.trim();
+  const last = document.getElementById('regLast').value.trim();
+  const yearRaw = document.getElementById('regYear').value.trim();
+  const year = parseInt(yearRaw,10);
+  const thisYear = new Date().getFullYear();
+  const errEl = document.getElementById('regError');
+  const errText = document.getElementById('regErrorText');
+  function showErr(msg){ errText.textContent = msg; errEl.style.display='flex'; }
+  if(!first || !last){ showErr('Лутфан ном ва фамилияи худро нависед.'); return; }
+  if(!yearRaw || isNaN(year) || year<1930 || year>thisYear){ showErr('Лутфан соли таваллуди дурустро ворид кунед.'); return; }
+  state.firstName = first;
+  state.lastName = last;
+  state.birthYear = year;
+  state.userName = first;
+  state.registered = true;
+  state.onboarded = true;
+  saveState();
+  toast(`Хуш омадед, ${first}! 🎉`);
+  boot();
+}
+
+/* ---------- ONBOARDING ---------- */
+/* ---------- LINE CHART (canvas) ---------- */
+function drawLineChart(){
+  const canvas = document.getElementById('lineChart');
+  if(!canvas) return;
+  const h = [...state.history].sort((a,b)=>a.date.localeCompare(b.date)).slice(-progressRange);
+  const dpr = window.devicePixelRatio||1;
+  const cssW = canvas.parentElement.clientWidth;
+  const cssH = 220;
+  canvas.width = cssW*dpr; canvas.height = cssH*dpr;
+  canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,cssW,cssH);
+  const pad = {l:34, r:14, t:16, b:26};
+  const w = cssW-pad.l-pad.r, hgt = cssH-pad.t-pad.b;
+  const isLight = state.theme==='light';
+  ctx.strokeStyle = isLight ? 'rgba(20,25,50,0.08)' : 'rgba(255,255,255,0.08)';
+  ctx.fillStyle = isLight ? '#5A6180' : '#9AA4BD';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y = pad.t + hgt*(i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+w,y); ctx.stroke();
+    ctx.fillText(String(100-i*25), 4, y+4);
+  }
+  if(h.length<2){
+    ctx.fillStyle = isLight ? '#5A6180' : '#9AA4BD';
+    ctx.textAlign='center';
+    ctx.fillText('Барои дидани график ҳадди ақал 2 нуқта лозим аст', cssW/2, cssH/2);
+    return;
+  }
+  const stepX = w/(h.length-1);
+  const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+hgt);
+  grad.addColorStop(0,'rgba(139,92,246,0.35)');
+  grad.addColorStop(1,'rgba(139,92,246,0)');
+  ctx.beginPath();
+  h.forEach((d,i)=>{
+    const x = pad.l+stepX*i, y = pad.t + hgt*(1-d.overall/100);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+w, pad.t+hgt); ctx.lineTo(pad.l, pad.t+hgt); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.beginPath();
+  const lineGrad = ctx.createLinearGradient(0,0,cssW,0);
+  lineGrad.addColorStop(0,'#8B5CF6'); lineGrad.addColorStop(1,'#22D3EE');
+  h.forEach((d,i)=>{
+    const x = pad.l+stepX*i, y = pad.t + hgt*(1-d.overall/100);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle = lineGrad; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke();
+
+  h.forEach((d,i)=>{
+    const x = pad.l+stepX*i, y = pad.t + hgt*(1-d.overall/100);
+    ctx.beginPath(); ctx.arc(x,y,3.2,0,Math.PI*2);
+    ctx.fillStyle = isLight? '#fff':'#0d1120'; ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle='#22D3EE'; ctx.stroke();
+    if(i===0 || i===h.length-1 || h.length<=8){
+      ctx.fillStyle = isLight ? '#5A6180' : '#9AA4BD';
+      ctx.textAlign='center';
+      ctx.fillText(fmtDate(d.date), x, cssH-6);
+    }
+  });
+}
+
+/* ---------- RENDER ---------- */
+function render(){
+  const route = currentRoute();
+  const map = {
+    home: pageHome, analysis: pageAnalysis, routine: pageRoutine,
+    progress: pageProgress, hairstyle: pageHairstyle, profile: pageProfile,
+    reminders: pageReminders, privacy: pagePrivacy,
+    skintype: pageSkinType, fullroutine: pageFullRoutine, wellness: pageWellness,
+    report: pageReport, compare: pageCompare, tips: pageTips, settings: pageSettings,
+  };
+  document.getElementById('app').innerHTML = shell(map[route]());
+  requestAnimationFrame(()=>{
+    if(route==='home'){
+      const c = document.getElementById('homeRing');
+      if(c) drawRing(c, todayScore(), '#8B5CF6', '#22D3EE', getComputedStyle(document.body).getPropertyValue('--surface2'));
+    }
+    if(route==='progress'){ drawLineChart(); }
+    if(route==='compare'){ const s=document.getElementById('compareSlider'); if(s) updateCompare(s.value); }
+    document.querySelectorAll('.bar-fill').forEach(el=>{
+      const w = el.style.width; el.style.width='0%';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>el.style.width=w));
+    });
+  });
+}
+window.addEventListener('resize', ()=>{ if(currentRoute()==='progress') drawLineChart(); if(currentRoute()==='home'){const c=document.getElementById('homeRing'); if(c) drawRing(c, todayScore(),'#8B5CF6','#22D3EE',getComputedStyle(document.body).getPropertyValue('--surface2'));}});
+
+applyAccent();
+function boot(){
+  if(!state.registered){ renderRegistration(); return; }
+  render();
+  document.getElementById('app').style.fontSize = (state.fontScale||1)+'em';
+}
+boot();
+</script>
+</body>
+</html>
