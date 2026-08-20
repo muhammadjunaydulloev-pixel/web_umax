@@ -1,0 +1,20 @@
+{
+  "name": "ruyi-man-ai",
+  "version": "1.0.0",
+  "description": "Rӯйи Ман AI — Face Analysis backend бо Groq Vision",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -645,6 +645,7 @@ function pageHome(){
 
 let uploadedImgUrl = null, analysisStage = 'idle'; // idle | preview | loading | result
 let lastResult = null;
+let selectedFile = null;
 
 function pageAnalysis(){
   return `
@@ -667,7 +668,7 @@ function renderAnalysisBody(){
       <div class="small">Клик кунед ё файлро кашед — JPG, PNG</div>
     </label>
     <input id="fileInput" type="file" accept="image/*" style="display:none" onchange="onFileChosen(event)">
-    <div class="note-box">${icon('shield')}<span>Аксҳои шумо танҳо дар дастгоҳи шумо (localStorage) нигоҳ дошта мешаванд ва ба ягон сервер фиристода намешаванд — реҷаи озмоишӣ.</span></div>
+    <div class="note-box">${icon('shield')}<span>🔒 Барои таҳлил акс муваққатан ба сервери AI фиристода мешавад. Акс дар localStorage нигоҳ дошта намешавад ва баъди коркард аз memory-и server тоза карда мешавад.</span></div>
     `;
   }
   if(analysisStage==='preview'){
@@ -690,14 +691,16 @@ function renderAnalysisBody(){
   }
   if(analysisStage==='result' && lastResult){
     const r = lastResult;
+    const conf = typeof r.confidence === 'number' ? r.confidence : null;
     return `
     <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
       <img src="${uploadedImgUrl}" style="width:64px; height:64px; border-radius:14px; object-fit:cover; border:1px solid var(--border);">
       <div>
-        <h3 style="font-size:17px;">Натиҷаи таҳлил</h3>
+        <h3 style="font-size:17px;">🤖 AI Visual Analysis</h3>
         <span class="chip chip-good">${icon('check')} Тайёр шуд</span>
       </div>
     </div>
+    ${conf!==null ? `<div class="note-box" style="margin-bottom:16px;">${icon('shield')}<span>Эътимоди таҳлил: ${conf}%${conf<40 ? ' — ⚠️ Акс барои таҳлили дақиқ кофӣ нест. Лутфан аксро бо рӯшноии хуб ва рӯ ба камера гузоред.' : ''}</span></div>` : ''}
     <div class="eyebrow" style="margin-bottom:2px;">Умумӣ</div>
     ${metricRow('Сифати акс', r.quality, false)}
     ${metricRow('Симметрияи визуалӣ', r.symmetry, false)}
@@ -720,6 +723,12 @@ function renderAnalysisBody(){
     <div class="eyebrow" style="margin:16px 0 2px;">${icon('hair')} Мӯй</div>
     ${metricRow('Саломатии намоёни мӯй', r.hair, false)}
 
+    ${(Array.isArray(r.notes) && r.notes.length) ? `
+    <div class="eyebrow" style="margin:16px 0 2px;">Мушоҳидаҳо</div>
+    <ul class="small" style="margin:0 0 4px; padding-left:18px; line-height:1.7; color:var(--text2);">
+      ${r.notes.map(n=>`<li>${n}</li>`).join('')}
+    </ul>` : ''}
+
     <div class="note-box">${icon('shield')}<span><b>Эзоҳ:</b> Ин таҳлил танҳо аз рӯи акс аст, тахминӣ мебошад ва ташхиси тиббӣ нест. Сайт инсонро аз рӯи «зебо/зишт» баҳо намедиҳад.</span></div>
     <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="saveAnalysis()">${icon('check')} Захира кардан ба таърих</button>
     <button class="btn btn-ghost btn-block" style="margin-top:10px;" onclick="resetAnalysis()">Акси нав</button>
@@ -739,34 +748,70 @@ function metricRow(name, val, inverse){
   </div>`;
 }
 
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8MB
+const ALLOWED_UPLOAD_TYPES = ['image/jpeg','image/jpg','image/png','image/webp'];
+
 function onFileChosen(e){
   const f = e.target.files[0];
   if(!f) return;
+
+  if(!ALLOWED_UPLOAD_TYPES.includes(f.type)){
+    toast('⚠️ Танҳо JPG, PNG ё WEBP қабул мешавад.');
+    e.target.value = '';
+    return;
+  }
+  if(f.size > MAX_UPLOAD_BYTES){
+    toast('⚠️ Ҳаҷми акс аз 8MB зиёд аст.');
+    e.target.value = '';
+    return;
+  }
+
+  selectedFile = f;
   uploadedImgUrl = URL.createObjectURL(f);
   analysisStage = 'preview';
   render();
 }
 function resetAnalysis(){
-  analysisStage='idle'; uploadedImgUrl=null; lastResult=null; render();
+  analysisStage='idle'; uploadedImgUrl=null; lastResult=null; selectedFile=null; render();
 }
-function startAnalysis(){
-  analysisStage='loading'; render();
-  setTimeout(()=>{
-    const quality = clamp(Math.round(rnd(85,98)),0,100);
-    const symmetry = clamp(Math.round(rnd(78,95)),0,100);
-    const dryness = clamp(Math.round(rnd(5,32)),0,100);
-    const redness = clamp(Math.round(rnd(4,28)),0,100);
-    const eyeClarity = clamp(Math.round(rnd(75,96)),0,100);
-    const darkCircles = clamp(Math.round(rnd(8,40)),0,100);
-    const eyebrows = clamp(Math.round(rnd(70,95)),0,100);
-    const neck = clamp(Math.round(rnd(72,96)),0,100);
-    const hair = clamp(Math.round(rnd(70,94)),0,100);
-    const overall = clamp(Math.round((quality+symmetry+(100-dryness)+(100-redness)+eyeClarity+(100-darkCircles)+eyebrows+neck+hair)/9),0,100);
-    lastResult = {quality,symmetry,dryness,redness,eyeClarity,darkCircles,eyebrows,neck,hair,overall};
-    analysisStage='result';
+async function startAnalysis(){
+  if(!selectedFile){
+    toast('⚠️ Акс барои таҳлили дақиқ кофӣ нест.');
+    analysisStage='idle'; render();
+    return;
+  }
+
+  analysisStage = 'loading';
+  render();
+
+  try{
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+
+    const response = await fetch('/api/analyze-face', {
+      method: 'POST',
+      body: formData
+    });
+
+    let payload = null;
+    try{ payload = await response.json(); }catch(e){ payload = null; }
+
+    if(!response.ok || !payload || typeof payload.overall !== 'number'){
+      const msg = (payload && payload.error) ? payload.error : 'Таҳлил ҳоло иҷро нашуд. Лутфан баъдтар дубора кӯшиш кунед.';
+      throw new Error(msg);
+    }
+
+    lastResult = payload;
+    analysisStage = 'result';
     render();
     setTimeout(()=>{ document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.style.width); },50);
-  }, 1800);
+
+  }catch(error){
+    console.error(error);
+    analysisStage = 'preview';
+    render();
+    toast('❌ ' + (error && error.message ? error.message : 'Таҳлил ҳоло иҷро нашуд. Лутфан баъдтар дубора кӯшиш кунед.'));
+  }
 }
 function saveAnalysis(){
   const key = todayKey();
@@ -1090,7 +1135,7 @@ function pagePrivacy(){
     <p class="muted" style="line-height:1.8;">
       Аксҳои шумо маълумоти шахсӣ мебошанд. Пеш аз истифодаи production, нигоҳдорӣ ва коркарди аксҳоро бо сиёсати равшани махфият танзим кунед.
     </p>
-    <div class="note-box" style="margin-top:16px;">${icon('shield')}<span>Дар Реҷаи озмоишӣ (Demo Mode) ин барнома маълумоти fake истифода мебарад ва аксҳо танҳо дар браузери шумо (localStorage) нигоҳ дошта мешаванд — ба ягон сервер фиристода намешаванд.</span></div>
+    <div class="note-box" style="margin-top:16px;">${icon('shield')}<span>🔒 Барои таҳлили AI, акси шумо муваққатан ба сервер фиристода мешавад ва танҳо дар вақти коркард дар memory-и сервер мемонад — баъд аз натиҷа фавран тоза карда мешавад ва ба диск/database нигоҳ дошта намешавад. Дигар маълумот (профил, таърих, натиҷаҳо) танҳо дар дастгоҳи шумо (localStorage) мемонад.</span></div>
     <div class="note-box">${icon('shield')}<span>Ин сайт инсонро аз рӯи «зебо/зишт» баҳо намедиҳад ва ташхиси тиббӣ намегузорад. Натиҷаҳо танҳо таҳлили визуалӣ ва тахминӣ мебошанд.</span></div>
   </div>
   `;
